@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:amq="http://activemq.apache.org/schema/core"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xsi:schemaLocation="
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd" >
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring">
+
+        <route id="receiveMessageRoute">
+            <from uri="activemq:queue:test.queue" />
+                <setHeader headerName="CamelHttpMethod">
+                    <constant>POST</constant> </setHeader>
+            <to uri="http://192.168.56.1:8081/base-consumer/webapi/consumer/receivedMessage"/>
+
+<!--            <log message="*********************************************************************" />-->
+<!--            <log message="Read message from outbox(out) queue: ${body}" />-->
+<!--            <log message="*********************************************************************" />-->
+        </route>
+
+    </camelContext>
+    <bean id="activemq" class="org.apache.activemq.camel.component.ActiveMQComponent">
+        <property name="connectionFactory">
+            <bean class="org.apache.activemq.ActiveMQConnectionFactory">
+                <property name="brokerURL" value="tcp://0.0.0.0:61816"/>
+            </bean>
+        </property>
+    </bean>
+</beans>
